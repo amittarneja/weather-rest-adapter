@@ -5,7 +5,7 @@ This is the second time I have used MuleSoft to design an Integration project, b
 Challenges faced during my journey.
 
 1. Mule EE version 4.2.0 got deployed as default but had to downgrade it to 4.1.4 to run the Munit test cases.
-2. Webservice endpoint provided by default was unavailable to had to use the docker image that got supplied with the exercise.
+2. Webservice endpoint provided by default was unavailable to had so use the docker image that got supplied with the exercise.
 3. GetWeather response file had some extra CDATA element so had to fix that in the file to make it work.
 
 Future version opportunities.
