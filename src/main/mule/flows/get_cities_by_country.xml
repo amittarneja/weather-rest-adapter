@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="ms_get_cities_by_country_flow" doc:id="93ee44d7-0a30-4b6b-9b53-5dc9af269ab0" >
+		<ee:transform doc:name="Transform Message" doc:id="395de826-1ec1-454d-9cf9-da7513c7220c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.webserviceX.NET
+---
+{
+	ns0#GetCitiesByCountry: {
+		ns0#CountryName: vars.uriParamCountry
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="2ae8c4ca-9a5a-4267-844e-4cdfb828803a" millisBetweenRetries="10000">
+			<wsc:consume doc:name="Consume" doc:id="579dcf85-86aa-4ecb-bbc8-aa0d5a167bfd" config-ref="Web_Service_Consumer_Config" operation="GetCitiesByCountry"/>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="5943b637-ee14-440e-8dca-397ffa78b6c0" >
+			<when expression="#[payload=='']">
+				<set-variable value="Response data is empty" doc:name="Set Variable" doc:id="42faa095-b5a0-4006-9cb8-c982ca659397" variableName="errorMessage"/>
+				<logger level="INFO" doc:name="Logger" doc:id="df130a80-dfa2-442e-a072-a6d59686cd9a" message="Empty response was returned from the Soap call"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="Get Cities Generate Response" doc:id="0d4aa169-77f4-4f1c-89dc-ed06bae16d03" name="ms_get_cities_by_country_generate_response_sub_flow"/>
+			</otherwise>
+		</choice>
+	</flow>
+	<sub-flow name="ms_get_cities_by_country_generate_response_sub_flow" doc:id="99d4356c-3346-42a3-8561-4f7ad63e1df1" >
+		<ee:transform doc:name="Transform Message" doc:id="2a88171d-d9f3-4ca5-b27e-3954e4c42653">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+write(payload.body.GetCitiesByCountryResponse, 'application/java')]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="812f1270-2972-46db-8f3b-7e76a4b1bf73" mimeType="text/plain" />
+		<flow-ref doc:name="Get Magic Transformer" doc:id="6101c437-385f-42c6-98c4-cfe6b3874584" name="ms_magic_transformer_flow" targetValue="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="e8952935-6bca-4c99-8040-9edf85637ce6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json duplicateKeyAsArray=true
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="21baa470-3342-4783-ae46-3eea57647e20" />
+	</sub-flow>
+</mule>

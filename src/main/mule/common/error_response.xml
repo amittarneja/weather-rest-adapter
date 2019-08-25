@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="ms_error_response_flow" doc:id="aebd1ebc-57bf-40ea-abb2-5c3b3868cac6" >
+		<set-payload value="Query Parameter Invalid" doc:name="Set Payload" doc:id="c10350cd-2ca1-4e38-8b92-1d8f95ef10e8" mimeType="application/json"/>
+		<ee:transform doc:name="Transform Message" doc:id="64687ee4-fd3a-437e-b3e1-850b7e5057b9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Please use Australia as input as currently only Australian cities are mapped."
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="payload" format="xml">
+      <types:example format="xml" element="NewDataSet" location="examples/GetCitiesByCountryResponse.xml"/>
+    </types:type>
+    <types:type name="get_weather" format="xml">
+      <types:example format="xml" element="{http://www.webserviceX.NET}GetWeatherResponse" location="examples/GetWeatherResponse.xml"/>
+    </types:type>
+    <types:type name="Error" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#2a88171d-d9f3-4ca5-b27e-3954e4c42653">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="payload"/>
+          <types:attributes type="payload"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#5e25d122-e47c-4dbd-894d-9d8857c33819">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="payload"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#e4563467-ecc3-44e6-9aef-2dc6b845b539">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="payload"/>
+          <types:attributes type="get_weather"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ae7d6d32-3784-4651-8370-59de1b0103e9">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="get_weather"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#64687ee4-fd3a-437e-b3e1-850b7e5057b9">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:attributes type="Error"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#c10350cd-2ca1-4e38-8b92-1d8f95ef10e8">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="Error"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#3fc98f67-1668-4877-aa2a-3ca92b417c00">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="Error"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

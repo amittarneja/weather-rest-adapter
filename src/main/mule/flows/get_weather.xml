@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="ms_get_weather_flow" doc:id="33e5b14c-d22b-43f3-a1db-979c70e2f44d" >
+		<ee:transform doc:name="Transform Message" doc:id="712a0d34-7944-47b2-b43b-4c8316840c49" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://www.webserviceX.NET
+---
+{
+	ns0#GetWeather: {
+		ns0#CityName: vars.uriParamCity,
+		ns0#CountryName: vars.uriParamCountry
+}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="2491cdab-614a-471e-841f-156facec2fcd" millisBetweenRetries="10000">
+			<wsc:consume operation="GetWeather" doc:name="Consume" doc:id="b309b67b-635c-45f3-b3e3-5e5a38efe0eb" config-ref="Web_Service_Consumer_Config"/>
+		</until-successful>
+		<choice doc:name="Choice" doc:id="2b10897d-d6b0-4625-8439-1f9e6725a540">
+			<when expression="#[payload=='']">
+				<set-variable value="Response data is empty" doc:name="Set Variable" doc:id="d87daea6-589b-422b-ab2c-33420ae5e154" variableName="errorMessage"/>
+				<logger level="INFO" doc:name="Logger" doc:id="39fa20fe-f589-451b-9871-1aee0a13555c" message="Empty response was returned from the Soap call"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="Get Weather Generate Response" doc:id="41aee78d-3095-433b-9d28-1625290f8129" name="ms_get_weather_sub_flow"/>
+			</otherwise>
+		</choice>
+	</flow>
+	<sub-flow name="ms_get_weather_sub_flow" doc:id="5afabad1-e3ec-4960-a471-7669ff1baab6" >
+		<ee:transform doc:name="Transform Message" doc:id="ae7d6d32-3784-4651-8370-59de1b0103e9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+write(payload.body.GetWeatherResponse, 'application/java')]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="b1151bdf-c162-458e-b0ab-0b9993fad444" mimeType="text/plain"/>
+		<flow-ref doc:name="Get Magic Transformer" doc:id="54d736b7-351a-41fa-bb9b-f9d6a9cc7633" name="ms_magic_transformer_flow"/>
+		<ee:transform doc:name="Transform Message" doc:id="228f0f66-793b-4ac3-850b-c867f72833cc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json duplicateKeyAsArray=true
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="660b1432-e44d-4507-bcca-3baa0b5b5226" />
+	</sub-flow>
+</mule>

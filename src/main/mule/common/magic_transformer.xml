@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="ms_magic_transformer_flow" doc:id="22a12e03-179e-4127-a13d-6da17ff3607a" >
+		<ee:transform doc:name="Transform Message" doc:id="e4563467-ecc3-44e6-9aef-2dc6b845b539" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+(payload as String replace "&lt;" with "<") 
+	 replace "&gt;" with ">"
+	 replace "{__text=" with ""
+	 replace "}" with ""	 
+	 replace "<![CDATA[" with ""]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="51d9d359-c7c1-4478-bf3d-7e268ff36d8c" mimeType="application/xml"/>
+		<logger level="INFO" doc:name="Logger" doc:id="952e1d8f-8e65-4251-9198-bfa726c0c70b" message="#[payload]"/>
+	</flow>
+</mule>

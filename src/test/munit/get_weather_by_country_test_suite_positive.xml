@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="new-test-suite.xml" />
+	<munit:test name="Test_Get_Weather_By_Cities_Sub_Flow_Positive" description="Test" doc:id="984bcd4b-d6ca-48da-bdb2-7a088eb78796" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="9d81e0d5-eed5-4c22-8d36-2dd14b6a14c2" >
+				<munit:payload value="#[MunitTools::getResourceAsString('test-data/weather-test-data.json')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_weather_flow" doc:id="cb3b88e5-f263-417a-a566-9ae55a2dccc7" name="ms_get_weather_flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8c72e615-8e22-42fa-a92b-ca05ef78daf6" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_Main_Get_Weather_By_City_Flow_Positive" description="Test" doc:id="328ae780-71bf-422a-ba53-966d7ba24ec7" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="5441f189-b934-4b4e-84ac-d284dc6b8373" >
+				<munit:attributes value="#[{'uriParams': {'country':'Australia' , 'city':'Melbourne'}}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_weather_sub_flow" doc:id="ec667e68-23ae-4183-89a8-a72532773e7e" name="get:\countries\(country)\cities\(city)\weather:weather-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ad07bbe8-490a-41d5-b564-c94565ce7cfb" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

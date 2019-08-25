@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="get_cities_by_country_test_suite_positive.xml" />
+	<munit:test name="Test_Get_Cities_By_Country_Sub_Flow_Positive" description="Test" doc:id="2c925453-94ff-4576-ad0d-8e22c0bd4874" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="fc8d6215-e3a1-4bc9-ba64-2613912541cd" >
+				<munit:payload value="#[MunitTools::getResourceAsString('test-data/cities-test-data.json')]" encoding="UTF-8" mediaType="application/json"/>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_cities_by_country_flow" doc:id="bb941b2e-69ae-4616-9484-aeaeeb4ebf86" name="ms_get_cities_by_country_flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="a370cc1d-3220-44d3-aba9-a9d3643e4db8" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_Main_Get_Cities_By_Country_Flow_Positive" description="Test" doc:id="e35cd41c-8be6-41f0-aad4-061e27b8ae57">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="d8ecbb36-49e5-490e-92bf-c767550ac763" >
+				<munit:attributes value="#[{'uriParams': {'country':'Australia'}}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_cities_by_country_generate_response_sub_flow" doc:id="857caa4f-1e29-4edd-8f2d-71de4f6f6416" name="get:\countries\(country)\cities:weather-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1625cb6a-3d54-47b2-a31a-d985f9d637c1" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+</mule>

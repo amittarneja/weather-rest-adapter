@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="get_weather_by_country_test_suite_negative.xml" />
+	<munit:test name="Test_Get_Weather_By_City_Sub_Flow_Negative" description="Test" doc:id="87dd7717-c7ae-478a-a052-fcf89d91cdd1" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="ebea900e-799c-44b9-9291-747664412816" >
+				<munit:payload value="#[MunitTools::getResourceAsString('test-data/weather-test-data-negative.json')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_weather_flow" doc:id="307e57a8-8307-49e4-b7fc-2ed714742c74" name="ms_get_weather_flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f8762684-eda6-4b14-b627-f75bc5d2d6f4" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_Main_Weather_Flow_Negative_With_Exception" description="Test" doc:id="8af7d272-35f5-48ba-993e-901778e2dca3" expectedErrorType="VALIDATION:MISMATCH" expectedException="org.mule.runtime.api.exception.MuleRuntimeException">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="ec93f0b4-f1b4-4a41-88d0-ed01ed067fcb" >
+				<munit:attributes value="#[{'uriParams': {'country':'Newzealand' , 'city':'Wellington'}}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_weather_sub_flow" doc:id="70c026ce-d2ae-41c2-9f14-f6426591dfc5" name="get:\countries\(country)\cities\(city)\weather:weather-config"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>

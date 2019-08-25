@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="ms_validate_log_request_flow" doc:id="5f9cee62-66aa-4f0f-9e54-7f242aa53032" >
+		<validation:matches-regex doc:name="Matches regex" doc:id="5bb04974-7794-4764-bfb5-feeff888647d" regex="[Aa]ustralia" value="#[vars.uriParamCountry]" caseSensitive="false" message="Please use Australia as input as currently only Australian cities are mapped."/>
+		<logger level="INFO" doc:name="Logger" doc:id="a8b6f2b4-765c-40ef-aafc-9dcbb80c8c9f" message='Request received for Country: #[vars.uriParamCountry]'/>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f8b95c49-70ed-43be-93b6-6bb2e67f5204">
+				<flow-ref doc:name="Flow Reference" doc:id="755747fb-89ba-4e29-864f-52d677ec2784" name="ms_error_response_flow" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

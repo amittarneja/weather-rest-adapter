@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="get_cities_by_country_test_suite_negative1.xml" />
+	<munit:test name="Test_get_cities_by_country_sub_flow_Negative" description="Test" doc:id="488ac684-688a-4172-8c64-8c45e13fdd86" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="6e9edc0b-f627-427c-b870-2f5c0a11b578" >
+				<munit:payload value="#[MunitTools::getResourceAsString('test-data/cities-test-data-negative.json')]" encoding="UTF-8" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_cities_by_country_flow" doc:id="76dd5972-84cf-4f9e-b54f-4ae7d8154938" name="ms_get_cities_by_country_flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d2364556-922c-4acf-9568-bf8ef4f8e5eb" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_Main_Flow_Negative_With_Exception" description="Test" doc:id="f3d01b64-a179-43ab-b87d-41ce105cdd5b" expectedErrorType="VALIDATION:MISMATCH" expectedException="org.mule.runtime.api.exception.MuleRuntimeException">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="c9c50e36-486c-4247-a269-870d56999b85" >
+				<munit:attributes value="#[{'uriParams': {'country':'Newzealand'}}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to ms_get_cities_by_country_generate_response_sub_flow" doc:id="54be5d26-a749-4292-9423-a3ccdeee0a10" name="get:\countries\(country)\cities\(city)\weather:weather-config"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>
